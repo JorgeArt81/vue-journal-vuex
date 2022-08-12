@@ -1,6 +1,24 @@
 <template>
-    <h1>DayBook Layout</h1>
-    <button class="btn btn-primary">Primary</button>
-    <button class="btn btn-secondary">Secondary</button>
-    <button class="btn btn-success">Success</button>
+    <Navbar />
+
+    <div class="d-flex my-2 container-xxl">
+        <div class="col-4">
+            <EntryList />
+        </div>
+        <div class="col">
+            <router-view />
+        </div>
+    </div>
+
 </template>
+
+<script>
+import { defineAsyncComponent } from '@vue/runtime-core';
+
+export default {
+    components: {
+        Navbar: defineAsyncComponent(() => import('../components/Navbar.vue')),
+        EntryList: defineAsyncComponent(() => import('../components/EntryList.vue'))
+    }
+}
+</script>
