@@ -1,21 +1,46 @@
 <template>
-    <div class="entry-container mb-3 pointer p-2" @click="$router.push({ name: 'entry', params: { id: 1 } })">
+    <div class="entry-container mb-3 pointer p-2" @click="$router.push({ name: 'entry', params: { id: entry.id } })">
         <!-- Titulo -->
         <div class="entry-title d-flex">
-            <span class="text-success fs-5 fw-bold">15</span>
-            <span class="mx-1 fs-5">Julio</span>
-            <span class="mx-2 fw-light">2021, jueves</span>
+            <span class="text-success fs-5 fw-bold">{{ day }}</span>
+            <span class="mx-1 fs-5">{{ month }}</span>
+            <span class="mx-2 fw-light">{{ yearDay }}</span>
         </div>
         <!-- Descripcion -->
         <div class="entry-description">
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dicta accusantium, porro eveniet voluptates unde
-            id
-            quidem, itaque perspiciatis illo numquam fugiat vitae. Odit maiores distinctio dolores consequatur tempora
-            iure
-            illo?
+            {{ shortText }}
         </div>
     </div>
 </template>
+
+<script>
+import getDayMonthYear from '../helpers/getDayMonthYear'
+
+export default {
+    props: {
+        entry: { type: Object, required: true }
+    },
+    computed: {
+        shortText() {
+            return (this.entry.text.length > 130)
+                ? this.entry.text.substring(0, 130) + '...'
+                : this.entry.text
+        },
+        day() {
+            const { day } = getDayMonthYear(this.entry.date)
+            return day
+        },
+        month() {
+            const { month } = getDayMonthYear(this.entry.date)
+            return month
+        },
+        yearDay() {
+            const { year } = getDayMonthYear(this.entry.date)
+            return year
+        },
+    }
+}
+</script>
 
 <style lang="scss" scoped>
 .entry-container {
@@ -27,7 +52,7 @@
     }
 
     .entry-description {
-        font-size: 12px;
+        font-size: 14px;
     }
 }
 </style>
