@@ -7,10 +7,12 @@
                 <span class="mx-2 fs-4 fw-light">{{ yearDay }}</span>
             </div>
             <div>
+                <input type="file" @change="onSelectedImage" ref="imageSelector" v-show="false"
+                    accept="image/png, image/jpeg">
                 <button v-if="entry.id" class="btn btn-danger mx-2" @click="onDeleteEntry">
                     Borrar <i class="fa fa-trash-alt"></i>
                 </button>
-                <button class="btn btn-primary mx-2">
+                <button class="btn btn-primary mx-2" @click="onSelectImage">
                     Subir foto <i class="fa fa-upload"></i>
                 </button>
             </div>
@@ -21,18 +23,21 @@
             <textarea v-model="entry.text" placeholder="¿Qué sucedió hoy?"></textarea>
         </div>
 
-        <img src="https://i0.wp.com/evilnapsis.com/wp-content/uploads/2018/01/vue.png?resize=1140%2C641&ssl=1"
-            alt="entry-picture" class="img-thumbnail">
+        <img v-if="entry.picture && !localImage" :src="entry.picture" alt="entry-picture" class="img-thumbnail">
+
+        <img v-if="locaImage" :src="locaImage" alt="entry-picture" class="img-thumbnail">
     </template>
 
     <Fab icon="fa-save" @on:click="saveEntry" />
-
+    
 </template>
 
 <script>
 import { defineAsyncComponent } from '@vue/runtime-core'
 import { mapGetters, mapActions } from 'vuex'
+
 import getDayMonthYear from '../helpers/getDayMonthYear'
+import uploadImage from '../helpers/uploadImage'
 import Swal from 'sweetalert2'
 
 export default {
@@ -47,7 +52,9 @@ export default {
     },
     data() {
         return {
-            entry: null
+            entry: null,
+            locaImage: null,
+            file: null
         }
     },
     computed: {
@@ -90,6 +97,9 @@ export default {
             })
             Swal.showLoading()
 
+            const picture = await uploadImage(this.file)
+            this.entry.picture = picture
+
             if (this.entry.id) {
                 await this.updateEntry(this.entry)
             } else {
@@ -97,6 +107,7 @@ export default {
                 this.$router.push({ name: 'entry', params: { id } })
             }
 
+            this.file = null
             Swal.fire('Guardado', 'Entrada registrada con éxito', 'success')
         },
         async onDeleteEntry() {
@@ -119,6 +130,23 @@ export default {
 
                 Swal.fire('Eliminado', '', 'success')
             }
+        },
+        onSelectedImage(event) {
+            const file = event.target.files[0]
+            if (!file) {
+                this.locaImage = null
+                this.file = null
+                return
+            }
+
+            this.file = file
+            const fileReader = new FileReader()
+            fileReader.onload = () => this.locaImage = fileReader.result
+            fileReader.readAsDataURL(file)
+        },
+        onSelectImage() {
+            // console.log(this.$refs)
+            this.$refs.imageSelector.click()
 
         }
     },

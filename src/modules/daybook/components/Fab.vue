@@ -22,7 +22,6 @@ button {
     height: 80px;
     position: fixed;
     right: 20px;
-    right: 80px;
     width: 80px;
 }
 </style>
