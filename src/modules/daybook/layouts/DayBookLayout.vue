@@ -10,7 +10,7 @@
         </div>
     </div>
 
-    <div class="d-flex my-2 container-xxl">
+    <div v-else class="d-flex my-2 container-xxl">
         <div class="col-4">
             <EntryList />
         </div>

@@ -1,9 +1,13 @@
 <script setup>
-// This starter template is using Vue 3 <script setup> SFCs
-// Check out https://vuejs.org/api/sfc-script-setup.html#script-setup
-import HelloWorld from './components/HelloWorld.vue'
+import useAuth from './modules/auth/composables/useAuth';
+
+const { authStatus, checkAuthStatus } = useAuth()
+checkAuthStatus()
 </script>
 
 <template>
-  <router-view></router-view>
+  <div v-if="authStatus === 'authenticating'" class="alert alert-info" role="alert">
+    {{ authStatus }}
+  </div>
+  <router-view v-else></router-view>
 </template>
